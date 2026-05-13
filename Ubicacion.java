@@ -1,6 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
-
+// colocar el private de string de origen y destino
 public class Ubicacion {
     
     public static Map<String, Integer> ubicaciones ;
