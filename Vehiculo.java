@@ -5,11 +5,13 @@ public class Vehiculo {
     private String tipo;
     private String ubicacion;
     private int carga;
-    public Vehiculo(String matricula, String conductor, String marca, String tipo, String ubicacion) {
+    private int tarifa;
+    public Vehiculo(String matricula, String conductor, String marca, String tipo, String ubicacion, int tarifa) {
         this.matricula = matricula;
         this.conductor = conductor;
         this.marca = marca;
         this.tipo = tipo;
         this.ubicacion = ubicacion;
+        this.tarifa = tarifa;
     }
 }

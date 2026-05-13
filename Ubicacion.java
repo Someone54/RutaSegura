@@ -1,13 +1,18 @@
-import java.util.Random;
-public class Ubicacion {
-    public int[][] mapa = new int[10][10];
-    public Ubicacion(){
-        Random random = new Random();
-        for (int i = 0; i < mapa.length; i++) {
-            for (int j = 0; j < mapa[i].length; j++) {
-                mapa[i][j] = random.nextInt(1,3);
-            }
-        }
-    }
+import java.util.HashMap;
+import java.util.Map;
 
+public class Ubicacion {
+    
+    public static Map<String, Integer> ubicaciones ;
+    public int[][] mapa = {
+        {0, 150, 300, 450, 600},
+        {150, 0, 200, 350, 500},
+        {300, 200, 0, 250, 400},
+        {450, 350, 250, 0, 150},
+        {600, 500, 400, 150, 0}
+    }
+    public int obtenerDistancia(String origen, String destino) {
+        
+    }
 }
+
