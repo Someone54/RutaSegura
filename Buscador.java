@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Buscador{
-    public static void buscarVehiculo(ArrayList<Vehiculo> flota){
+    public static void buscarVehiculo(ArrayList<Vehiculo> flota)throws VehiculoNoEncontradoException{
         Scanner scanner = new Scanner(System.in);
         System.out.println("Ingresa la placa de vehiculo que quieras buscar:");
         String placa = scanner.nextLine();
@@ -19,10 +19,9 @@ public class Buscador{
                 System.out.println("Tipo: " + vehiculo.getTipo());
                 System.out.println("Carga: " + vehiculo.getCarga());
                 System.out.println("Tarifa: " + vehiculo.getTarifa());
-                break;
-            }else{
-                System.out.println("Vehículo no encontrado.");// Si no se encuentra el vehiculo se le avisa al usuario
+                return; // Salir del método después de encontrar el vehículo
             }
         }
+        throw new VehiculoNoEncontradoException("No se encontró el vehículo con placa " + placa);
     }
 }

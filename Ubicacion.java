@@ -16,8 +16,20 @@ public class Ubicacion {
         {600, 500, 400, 150, 0}
     };
     public static int obtenerDistancia(String origen, String destino) {
-        int distancia = mapa[ubicaciones.get(origen)][ubicaciones.get(destino)];
-        return distancia;
+        // Verificamos si las ciudades existen antes de acceder al arreglo
+        if (!ubicaciones.containsKey(origen) || !ubicaciones.containsKey(destino)) {
+            throw new UbicacionInvalidaException("Una o ambas ciudades no están registradas en el sistema.");
+        }
+        
+        return mapa[ubicaciones.get(origen)][ubicaciones.get(destino)];
+    }
+    public static boolean esUbicacionValida(String ciudad) {
+        if (ciudad == null || ciudad.isEmpty()) return false;
+        
+        // Formatear: "medellin" -> "Medellin" para que coincida con el Map
+        String ciudadFormateada = ciudad.substring(0, 1).toUpperCase() + ciudad.substring(1).toLowerCase();
+        
+        return ubicaciones.containsKey(ciudadFormateada);
     }
 }
 
