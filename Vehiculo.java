@@ -21,11 +21,11 @@ public class Vehiculo {
     // Getters para los atributos
     public String getMatricula(){ return matricula; }
     public String getConductor(){ return conductor; }
-    public int getCarga(){ return carga; }
-    public int getTarifa(){ return tarifa; }
     public String getMarca(){ return marca; }
     public String getTipo(){ return tipo; }
     public String getUbicacion(){ return ubicacion; }
+    public int getCarga(){ return carga; }
+    public int getTarifa(){ return tarifa; }
     
     
     // Calcular el flete

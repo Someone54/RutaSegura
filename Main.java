@@ -30,6 +30,9 @@ public class Main {
                 case 4:
                     System.out.println("Saliendo del sistema...");
                     break;
+                case 5:
+                    generarArchivo();
+                    break;
                 default:
                     System.out.println("Opción no válida.");
             }
@@ -40,7 +43,7 @@ public class Main {
     public static int leerOpcionMenu() {
         while (true) {
             try {
-                System.out.println("\n1. Crear | 2. Buscar | 3. Distancia | 4. Salir");
+                System.out.println("\n1. Crear | 2. Buscar | 3. Distancia | 4. Salir | 5. Generar archivo");
                 int num = scanner.nextInt();
                 scanner.nextLine();
                 return num;
@@ -94,5 +97,41 @@ public class Main {
             System.err.println("Error de ubicación: " + e.getMessage());
         }
     }
-}
+    
+    public static void generarArchivo() {
+        if (flota.isEmpty()) {
+            System.err.println("No hay vehículos registrados para generar el archivo.");
+            return;
+        }
 
+        try {
+            System.out.println("Ingresa la placa del vehículo:");
+            String placa = scanner.nextLine().trim();
+            Vehiculo vehiculo = buscarVehiculoPorPlaca(placa);
+
+            System.out.println("Origen:");
+            String origen = scanner.nextLine().trim();
+            System.out.println("Destino:");
+            String destino = scanner.nextLine().trim();
+
+            int distancia = Ubicacion.obtenerDistancia(origen, destino);
+            int total = vehiculo.calcularFlete(distancia);
+
+            Archivo.generarArchivo(vehiculo, Ubicacion.normalizarCiudad(origen), Ubicacion.normalizarCiudad(destino), distancia, total);
+            System.out.println("Archivo generado correctamente.");
+        } catch (VehiculoNoEncontradoException e) {
+            System.err.println(e.getMessage());
+        } catch (UbicacionInvalidaException e) {
+            System.err.println("Error de ubicación: " + e.getMessage());
+        }
+    }
+
+    public static Vehiculo buscarVehiculoPorPlaca(String placa) throws VehiculoNoEncontradoException {
+        for (Vehiculo vehiculo : flota) {
+            if (vehiculo.getMatricula().equalsIgnoreCase(placa)) {
+                return vehiculo;
+            }
+        }
+        throw new VehiculoNoEncontradoException("No se encontró el vehículo con placa " + placa);
+    }
+}
