@@ -37,7 +37,7 @@ public class Vehiculo {
 
     public static String generarPlaca(String ultimaPlaca) {
         String nuevaPlaca = "";
-        if (ultimaPlaca == "0") {
+        if (ultimaPlaca == null || "0".equals(ultimaPlaca)) {
             nuevaPlaca = "AAA000";
         }else{
             String letras = ultimaPlaca.substring(0, 3).toUpperCase();

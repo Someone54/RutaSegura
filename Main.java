@@ -11,15 +11,15 @@ public class Main {
         int opcion = 0;
 
         while (opcion != 4) {
-            opcion = leerOpcionMenu(); // Maneja el try-catch de entrada numérica
-            
+            opcion = leerOpcionMenu();
+
             switch (opcion) {
                 case 1:
                     crearVehiculo();
                     break;
                 case 2:
                     try {
-                        Buscador.buscarVehiculo(flota);
+                        Buscador.buscarVehiculo(flota, scanner);
                     } catch (VehiculoNoEncontradoException e) {
                         System.err.println(e.getMessage());
                     }
@@ -37,56 +37,57 @@ public class Main {
         scanner.close();
     }
 
-    // Solución al InputMismatchException solicitado
     public static int leerOpcionMenu() {
         while (true) {
             try {
                 System.out.println("\n1. Crear | 2. Buscar | 3. Distancia | 4. Salir");
                 int num = scanner.nextInt();
-                scanner.nextLine(); // Limpiar el buffer tras el número
+                scanner.nextLine();
                 return num;
             } catch (InputMismatchException e) {
                 System.err.println("Error: ¡Debe ingresar un número entero!");
-                scanner.nextLine(); // CRÍTICO: Limpia el buffer del error
+                scanner.nextLine();
             }
         }
     }
 
     public static void crearVehiculo() {
-    String ultPlaca = flota.isEmpty() ? "0" : flota.get(flota.size() - 1).getMatricula();
-    System.out.print("Nombre del conductor: ");
-    String conductor = scanner.nextLine();
-    System.out.print("Marca: ");
-    String marca = scanner.nextLine();
-    System.out.print("Tipo (Furgon / Camioneta): ");
-    String tipo = scanner.nextLine();
-    // Bucle de validación usando la lógica de la clase Ubicacion
-    String ubicacion;
-    while (true) {
-        System.out.println("Ingrese la ubicación actual (Medellin, Bogota, Cali, Cartagena, Barranquilla):");
-        ubicacion = scanner.nextLine();
-        if (Ubicacion.esUbicacionValida(ubicacion)) {
-            break; // Salimos si la clase Ubicacion dice que es true
-        } else {
+        String ultPlaca = flota.isEmpty() ? "0" : flota.get(flota.size() - 1).getMatricula();
+        System.out.print("Nombre del conductor: ");
+        String conductor = scanner.nextLine().trim();
+        System.out.print("Marca: ");
+        String marca = scanner.nextLine().trim();
+        System.out.print("Tipo (Furgon / Camioneta): ");
+        String tipo = scanner.nextLine().trim();
+
+        String ubicacion;
+        while (true) {
+            System.out.println("Ingrese la ubicación actual (Medellin, Bogota, Cali, Cartagena, Barranquilla):");
+            ubicacion = scanner.nextLine();
+            if (Ubicacion.esUbicacionValida(ubicacion)) {
+                ubicacion = Ubicacion.normalizarCiudad(ubicacion);
+                break;
+            }
             System.err.println("¡Error! La ciudad '" + ubicacion + "' no está en nuestra red de cobertura. Reintente.");
         }
+
+        if (tipo.equalsIgnoreCase("Furgon")) {
+            flota.add(new Furgon(ultPlaca, conductor, marca, ubicacion));
+            System.out.println("Furgón registrado.");
+        } else if (tipo.equalsIgnoreCase("Camioneta")) {
+            flota.add(new Camioneta(ultPlaca, conductor, marca, ubicacion));
+            System.out.println("Camioneta registrada.");
+        } else {
+            System.err.println("Tipo no válido. Debe ser 'Furgon' o 'Camioneta'.");
+        }
     }
-    // Creación final del objeto
-    if (tipo.equalsIgnoreCase("Furgon")) {
-        flota.add(new Furgon(ultPlaca, conductor, marca, ubicacion));
-        System.out.println("Furgón registrado.");
-    } else if (tipo.equalsIgnoreCase("Camioneta")) {
-        flota.add(new Camioneta(ultPlaca, conductor, marca, ubicacion));
-        System.out.println("Camioneta registrada.");
-    }
-    }   
 
     public static void gestionarDistancia() {
         try {
             System.out.println("Origen:");
-            String origen = scanner.nextLine();
+            String origen = scanner.nextLine().trim();
             System.out.println("Destino:");
-            String destino = scanner.nextLine();
+            String destino = scanner.nextLine().trim();
             int d = Ubicacion.obtenerDistancia(origen, destino);
             System.out.println("Distancia calculada: " + d + " km");
         } catch (UbicacionInvalidaException e) {
@@ -94,3 +95,4 @@ public class Main {
         }
     }
 }
+
