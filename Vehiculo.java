@@ -35,6 +35,7 @@ public class Vehiculo {
         return total;
     }
 
+    //Generamos una placa nueva para el vehiculo dependiendo de las que ya se han segistrado anteriormente
     public static String generarPlaca(String ultimaPlaca) {
         String nuevaPlaca = "";
         if (ultimaPlaca == null || "0".equals(ultimaPlaca)) {
@@ -51,6 +52,7 @@ public class Vehiculo {
         return nuevaPlaca;
     }
 
+    //Pasamos a mayuscula las letras de la placa
     private static String incrementarLetras(String letras) {
         char[] c = letras.toCharArray();
         for (int i = 2; i >= 0; i--) {

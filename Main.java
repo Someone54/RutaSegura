@@ -10,7 +10,8 @@ public class Main {
         System.out.println("Bienvenido a Ruta Segura");
         int opcion = 0;
 
-        while (opcion != 4) {
+        //Le damos al usuarios distintas opciones de que quiere relizar en el sistema
+        while (opcion != 5) {
             opcion = leerOpcionMenu();
 
             switch (opcion) {
@@ -33,6 +34,8 @@ public class Main {
                 case 5:
                     generarArchivo();
                     break;
+
+                    //Si el usuario ingresa una opción invalida salta un mensje de error
                 default:
                     System.out.println("Opción no válida.");
             }
@@ -40,6 +43,7 @@ public class Main {
         scanner.close();
     }
 
+    //Menu de opciones para el usuario
     public static int leerOpcionMenu() {
         while (true) {
             try {
@@ -54,6 +58,7 @@ public class Main {
         }
     }
 
+    //Metodo para crear un vehiculo nuevo
     public static void crearVehiculo() {
         String ultPlaca = flota.isEmpty() ? "0" : flota.get(flota.size() - 1).getMatricula();
         System.out.print("Nombre del conductor: ");
@@ -75,16 +80,19 @@ public class Main {
         }
 
         if (tipo.equalsIgnoreCase("Furgon")) {
-            flota.add(new Furgon(ultPlaca, conductor, marca, ubicacion));
-            System.out.println("Furgón registrado.");
+            Vehiculo vehiculo = new Furgon(ultPlaca, conductor, marca, ubicacion);
+            flota.add(vehiculo);
+            System.out.println("Creado con éxito. Placa asignada: " + vehiculo.getMatricula());
         } else if (tipo.equalsIgnoreCase("Camioneta")) {
-            flota.add(new Camioneta(ultPlaca, conductor, marca, ubicacion));
-            System.out.println("Camioneta registrada.");
+            Vehiculo vehiculo = new Camioneta(ultPlaca, conductor, marca, ubicacion);
+            flota.add(vehiculo);
+            System.out.println("Creado con éxito. Placa asignada: " + vehiculo.getMatricula());
         } else {
             System.err.println("Tipo no válido. Debe ser 'Furgon' o 'Camioneta'.");
         }
     }
 
+    //Metodo para calcular la distancia entre las dos ciudades ingresadas por el usuario
     public static void gestionarDistancia() {
         try {
             System.out.println("Origen:");
@@ -98,12 +106,16 @@ public class Main {
         }
     }
     
+    //Metodo para generar el archivo con la información del flete basado en la placa del vehiculo
     public static void generarArchivo() {
+
+        //Si la flota no tiene vehiculos registrados salta un aviso de error
         if (flota.isEmpty()) {
             System.err.println("No hay vehículos registrados para generar el archivo.");
             return;
         }
 
+        //Se ejecuta el try catch pidiendole al usuario ingresar los datos necesarios encaso de que el filtro anterior pase sin problemas
         try {
             System.out.println("Ingresa la placa del vehículo:");
             String placa = scanner.nextLine().trim();
@@ -125,7 +137,8 @@ public class Main {
             System.err.println("Error de ubicación: " + e.getMessage());
         }
     }
-
+    
+    //Si la placa ingresara no coincide con ningun vehiculo registrado salta la excepcion de vehiculo no encontrado
     public static Vehiculo buscarVehiculoPorPlaca(String placa) throws VehiculoNoEncontradoException {
         for (Vehiculo vehiculo : flota) {
             if (vehiculo.getMatricula().equalsIgnoreCase(placa)) {
