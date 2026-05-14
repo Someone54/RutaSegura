@@ -12,7 +12,8 @@ public class Ubicacion {
         {600, 500, 400, 150, 0}
     }
     public int obtenerDistancia(String origen, String destino) {
-        
+        int distancia = mapa[ubicaciones.get(origen)][ubicaciones.get(destino)];
+        return distancia;
     }
 }
 

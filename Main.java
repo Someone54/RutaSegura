@@ -7,7 +7,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         // Input de datos para un vehículo nuevo
-        if (flota.size() == 0 || ){
+        if (flota.isEmpty()){
             System.out.println("Ingrese la matrícula del vehículo:");
         String matricula = scanner.nextLine();
         System.out.println("Ingrese el nombre del conductor:");
