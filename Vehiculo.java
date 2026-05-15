@@ -26,7 +26,7 @@ public class Vehiculo {
     public String getUbicacion(){ return ubicacion; }
     public int getCarga(){ return carga; }
     public int getTarifa(){ return tarifa; }
-    
+    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
     
     // Calcular el flete
     public int calcularFlete(int distancia) {

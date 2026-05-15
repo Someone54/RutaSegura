@@ -11,7 +11,7 @@ public class Main {
         int opcion = 0;
 
         //Le damos al usuarios distintas opciones de que quiere relizar en el sistema
-        while (opcion != 5) {
+        while (opcion != 7) {
             opcion = leerOpcionMenu();
 
             switch (opcion) {
@@ -29,10 +29,16 @@ public class Main {
                     gestionarDistancia();
                     break;
                 case 4:
-                    System.out.println("Saliendo del sistema...");
+                    generarArchivo();
                     break;
                 case 5:
-                    generarArchivo();
+                    revisarFlota();
+                    break;
+                case 6:
+                    eliminarVehiculo();
+                    break;
+                case 7:
+                    System.out.println("Saliendo del programa...");
                     break;
 
                     //Si el usuario ingresa una opción invalida salta un mensje de error
@@ -47,7 +53,8 @@ public class Main {
     public static int leerOpcionMenu() {
         while (true) {
             try {
-                System.out.println("\n1. Crear | 2. Buscar | 3. Distancia | 4. Salir | 5. Generar archivo");
+                System.out.println("______________________________________________________________________________________");
+                System.out.println("\n1. Crear | 2. Buscar | 3. Distancia | 4. Generar archivo | 5. Revisar flota | 6. Eliminar vehículo | 7. Salir");
                 int num = scanner.nextInt();
                 scanner.nextLine();
                 return num;
@@ -61,12 +68,34 @@ public class Main {
     //Metodo para crear un vehiculo nuevo
     public static void crearVehiculo() {
         String ultPlaca = flota.isEmpty() ? "0" : flota.get(flota.size() - 1).getMatricula();
-        System.out.print("Nombre del conductor: ");
-        String conductor = scanner.nextLine().trim();
-        System.out.print("Marca: ");
-        String marca = scanner.nextLine().trim();
-        System.out.print("Tipo (Furgon / Camioneta): ");
-        String tipo = scanner.nextLine().trim();
+        String conductor;
+        while (true) {
+            System.out.print("Nombre del conductor: ");
+            conductor = scanner.nextLine().trim();
+            if (conductor.matches("[a-zA-Z ]+")) {
+                break;
+            } else {
+                System.err.println("Error: El nombre del conductor solo debe contener letras y espacios. Intente nuevamente.");
+            }
+        }
+        
+        System.out.print("Marca(Chevrolet, Ford, Mercedes-Benz, Foton, Volkswagen): ");
+        String marca=" ";
+        while (marca==" ") {
+            marca = verificarMarca(scanner.nextLine().trim());
+            if (marca.equals(" ")) {
+                System.err.println("Marca no válida. Debe ser Chevrolet, Ford, Mercedes-Benz, Foton o Volkswagen. Intente nuevamente.");
+            }
+        }
+
+        System.out.print("Tipo (Furgon / Camioneta / Camion): ");
+        String tipo = " ";
+        while (tipo == " ") {
+            tipo = verificarTipo(scanner.nextLine().trim());
+            if (tipo.equals(" ")) {
+                System.err.println("Tipo no válido. Debe ser 'Furgon', 'Camioneta' o 'Camion'. Intente nuevamente.");
+            }
+        }
 
         String ubicacion;
         while (true) {
@@ -87,17 +116,21 @@ public class Main {
             Vehiculo vehiculo = new Camioneta(ultPlaca, conductor, marca, ubicacion);
             flota.add(vehiculo);
             System.out.println("Creado con éxito. Placa asignada: " + vehiculo.getMatricula());
+        } else if (tipo.equalsIgnoreCase("Camion")) {
+            Vehiculo vehiculo = new Camion(ultPlaca, conductor, marca, ubicacion);
+            flota.add(vehiculo);
+            System.out.println("Creado con éxito. Placa asignada: " + vehiculo.getMatricula());
         } else {
-            System.err.println("Tipo no válido. Debe ser 'Furgon' o 'Camioneta'.");
+            System.err.println("Tipo no válido. Debe ser 'Furgon', 'Camioneta' o 'Camion'.");
         }
     }
 
     //Metodo para calcular la distancia entre las dos ciudades ingresadas por el usuario
     public static void gestionarDistancia() {
         try {
-            System.out.println("Origen:");
+            System.out.println("Origen(Medellin, Bogota, Cali, Cartagena, Barranquilla):");
             String origen = scanner.nextLine().trim();
-            System.out.println("Destino:");
+            System.out.println("Destino(Medellin, Bogota, Cali, Cartagena, Barranquilla):");
             String destino = scanner.nextLine().trim();
             int d = Ubicacion.obtenerDistancia(origen, destino);
             System.out.println("Distancia calculada: " + d + " km");
@@ -120,16 +153,15 @@ public class Main {
             System.out.println("Ingresa la placa del vehículo:");
             String placa = scanner.nextLine().trim();
             Vehiculo vehiculo = buscarVehiculoPorPlaca(placa);
-
-            System.out.println("Origen:");
-            String origen = scanner.nextLine().trim();
-            System.out.println("Destino:");
+            System.out.println("Destino(Medellin, Bogota, Cali, Cartagena, Barranquilla):");
             String destino = scanner.nextLine().trim();
 
-            int distancia = Ubicacion.obtenerDistancia(origen, destino);
+            int distancia = Ubicacion.obtenerDistancia(vehiculo.getUbicacion(), destino);
             int total = vehiculo.calcularFlete(distancia);
 
-            Archivo.generarArchivo(vehiculo, Ubicacion.normalizarCiudad(origen), Ubicacion.normalizarCiudad(destino), distancia, total);
+            Archivo.generarArchivo(vehiculo, Ubicacion.normalizarCiudad(vehiculo.getUbicacion()), Ubicacion.normalizarCiudad(destino), distancia, total);
+            vehiculo.setUbicacion(destino);
+            flota.set(buscarVehiculoEnFlota(placa), vehiculo);
             System.out.println("Archivo generado correctamente.");
         } catch (VehiculoNoEncontradoException e) {
             System.err.println(e.getMessage());
@@ -146,5 +178,63 @@ public class Main {
             }
         }
         throw new VehiculoNoEncontradoException("No se encontró el vehículo con placa " + placa);
+    }
+    
+    //Metodo para buscar la pocicion de un vehiculo en la flota
+    public static int buscarVehiculoEnFlota(String placa) throws VehiculoNoEncontradoException {
+        for (int i = 0; i < flota.size(); i++) {
+            if (flota.get(i).getMatricula().equalsIgnoreCase(placa)) {
+                return i;
+            }
+        }
+        throw new VehiculoNoEncontradoException("No se encontró el vehículo con placa " + placa);
+    }
+    
+    //Metodo para imprir toda la informacion de los vehiculos de la flota
+    public static void revisarFlota() {
+        if (flota.isEmpty()) {
+            System.out.println("No hay vehículos registrados.");
+        } else {
+            System.out.println("Vehículos registrados:");
+            for (Vehiculo v : flota) {
+                System.out.println("- " + v.getMatricula() + " | Conductor: " + v.getConductor() + " | Marca: " + v.getMarca() + " | Tipo: " + v.getTipo() + " | Ubicación: " + v.getUbicacion());
+            }
+        }
+    }
+
+    public static void eliminarVehiculo() {
+        if (flota.isEmpty()) {
+            System.out.println("No hay vehículos registrados para eliminar.");
+            return;
+        }
+        try {
+            System.out.println("Ingresa la placa del vehículo a eliminar:");
+            String placa = scanner.nextLine().trim();
+            int index = buscarVehiculoEnFlota(placa);
+            flota.remove(index);
+            System.out.println("Vehículo con placa " + placa + " eliminado correctamente.");
+        } catch (VehiculoNoEncontradoException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public static String verificarMarca(String marca) {
+        String[] marcasValidas = {"Chevrolet", "Ford", "Mercedes-Benz", "Foton", "Volkswagen"};
+        for (String m : marcasValidas) {
+            if (m.equalsIgnoreCase(marca)) {
+                return m;
+            }
+        }
+        return " ";
+    }
+
+    public static String verificarTipo(String tipo) {
+        String[] tiposValidos = {"Furgon", "Camioneta", "Camion"};
+        for (String t : tiposValidos) {
+            if (t.equalsIgnoreCase(tipo)) {
+                return t;
+            }
+        }
+        return " ";
     }
 }

@@ -11,3 +11,8 @@ class UbicacionInvalidaException extends RuntimeException {
         super(mensaje);
     }
 }
+class NombreInvalido extends RuntimeException {
+    public NombreInvalido(String mensaje) {
+        super(mensaje);
+    }
+}
